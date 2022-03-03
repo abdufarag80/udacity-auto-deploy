@@ -28,7 +28,7 @@ commands:
               npm run migration:revert
             fi
 jobs:
-  build_backend:
+  build-backend:
     docker:
       - image: circleci/node:13.8.0
     steps:
@@ -40,7 +40,7 @@ jobs:
           paths:
             - project/backend/node_modules
 
-  build_frontend:
+  build-frontend:
     docker:
       - image: circleci/node:13.8.0
     steps:
@@ -54,7 +54,7 @@ jobs:
 
   test_backend:
     docker:
-      # - image: circleci/node:13.8.0
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - attach_workspace:
@@ -64,7 +64,7 @@ jobs:
 
   test_frontend:
     docker:
-      # - image: circleci/node:13.8.0
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - attach_workspace:
@@ -325,14 +325,14 @@ jobs:
 workflows:
   my_workflow:
     jobs:
-      - build_backend
-      - build_frontend
+      - build-backend
+      - build-frontend
       - test_backend:
           requires:
-            - build_backend
+            - build-backend
       - test_frontend:
           requires:
-            - build_frontend
+            - build-frontend
       - analyze_backend:
           requires:
             - test_backend

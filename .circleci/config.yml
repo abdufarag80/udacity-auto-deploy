@@ -54,7 +54,7 @@ jobs:
 
   test_backend:
     docker:
-      - image: circleci/node:13.8.0
+      # - image: circleci/node:13.8.0
     steps:
       - checkout
       - attach_workspace:
@@ -64,7 +64,7 @@ jobs:
 
   test_frontend:
     docker:
-      - image: circleci/node:13.8.0
+      # - image: circleci/node:13.8.0
     steps:
       - checkout
       - attach_workspace:

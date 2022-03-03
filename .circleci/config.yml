@@ -87,7 +87,7 @@ jobs:
       - checkout
       - run: npm audit --audit-level=critical --prefix frontend
       - run: npm audit fix --force   
-      
+
   deploy_backend_infrastructure:
     docker:
       - image: amazon/aws-cli

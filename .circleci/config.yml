@@ -35,6 +35,8 @@ jobs:
       - checkout
       - run: npm i --prefix backend
       - run: npm run lint --prefix backend
+      - run: npm audit fix --audit-level=critical --force
+            
       - persist_to_workspace:
           root: ~/
           paths:
@@ -47,6 +49,8 @@ jobs:
       - checkout
       - run: npm i --prefix frontend 
       - run: npm run lint --prefix frontend
+      - run: npm audit fix --audit-level=critical --force
+
       - persist_to_workspace: 
           root: ~/
           paths:

@@ -39,7 +39,7 @@ jobs:
           root: ~/
           paths:
             - project/backend/node_modules
-      - run: npm audit fix --force 
+      - run: npm audit fix --prefix backend    --force 
 
   build_frontend:
     docker:
@@ -52,8 +52,8 @@ jobs:
           root: ~/
           paths:
             - project/frontend/node_modules
-      - run: npm audit fix --force 
-      
+      - run: npm audit fix --prefix frontend  --force 
+
   test_backend:
     docker:
       - image: circleci/node:13.8.0

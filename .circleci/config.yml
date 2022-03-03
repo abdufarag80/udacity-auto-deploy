@@ -33,8 +33,7 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
-      - run: npm i --prefix backend
-      - run: npm audit fix --force         
+      - run: npm i --prefix backend        
       - run: npm run lint --prefix backend
       - persist_to_workspace:
           root: ~/
@@ -46,8 +45,7 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
-      - run: npm i --prefix frontend
-      - run: npm audit fix --force       
+      - run: npm i --prefix frontend  
       - run: npm run lint --prefix frontend
       - persist_to_workspace:
           root: ~/

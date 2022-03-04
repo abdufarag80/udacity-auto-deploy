@@ -7,7 +7,7 @@ commands:
       workflow_id:
         type: string 
     steps: 
-      - run:
+      - run: 
           name: Destroy environments 
           when: on_fail
           command: |

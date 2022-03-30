@@ -24,9 +24,28 @@ jobs:
           paths:
             - project/backend/node_modules
       - run: npm audit fix --prefix backend    --force 
-
+  test_frontend:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/
+      - run: npm i --prefix frontend   
+      - run: npm run test --prefix frontend
+  test_backend:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/
+      - run: npm i --prefix backend     
+      - run: npm run test --prefix backend      
 workflows:
   default:
     jobs:
         - build_frontend
         - build_backend
+        - test_frontend
+        - test_backend

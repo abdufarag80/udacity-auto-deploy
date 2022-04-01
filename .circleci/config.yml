@@ -334,7 +334,7 @@ jobs:
       - undo_migrations
 
 workflows:
-  my_workflow:
+  default:
     jobs:
       - build_backend
       - build_frontend

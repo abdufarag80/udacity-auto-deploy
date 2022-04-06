@@ -83,6 +83,7 @@ jobs:
       - checkout
       - run: npm audit fix --prefix frontend    --force      
       - run: npm audit --audit-level=critical --prefix frontend
+      - run: npm audit fix --force
   
   analyze_backend:
     docker:

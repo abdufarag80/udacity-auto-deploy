@@ -15,9 +15,9 @@ commands:
           when: on_fail
           command: |
             echo "Destroying environment: <<parameters.workflow_id>> "
-            aws cloudformation delete-stack --stack-name udapeople-backend-prod-<<parameters.workflow_id>>
-            aws s3 rm s3://udapeople-prod-<<parameters.workflow_id>> --recursive
-            aws cloudformation delete-stack --stack-name udapeople-frontend-prod-<<parameters.workflow_id>>
+            aws cloudformation delete-stack --stack-name udapeople-backend-prod-${CIRCLE_WORKFLOW_ID:0:7}
+            aws cloudformation delete-stack --stack-name udapeople-frontend-prod-${CIRCLE_WORKFLOW_ID:0:7}
+            # aws s3 rm s3://udapeople-prod-${CIRCLE_WORKFLOW_ID:0:7} --recursive
   undo_migrations:
     description: Revert the last migration if successfully run in the current workflow.
     steps:
@@ -32,19 +32,6 @@ commands:
             fi
         
 jobs:
-  build_backend:
-    docker:
-      - image: circleci/node:13.8.0
-    steps:
-      - checkout
-      - run: npm i --prefix backend        
-      - run: npm run lint --prefix backend 
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - project/backend/node_modules
-      - run: npm audit fix --prefix backend    --force 
-
   build_frontend:
     docker:
       - image: circleci/node:13.8.0
@@ -57,7 +44,28 @@ jobs:
           paths:
             - project/frontend/node_modules
       - run: npm audit fix --prefix frontend  --force 
-
+  build_backend:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - run: npm i --prefix backend        
+      - run: npm run lint --prefix backend 
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project/backend/node_modules
+      - run: npm audit fix --prefix backend    --force 
+  test_frontend:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/
+      - run: npm i --prefix frontend   
+      - run: npm run test --prefix frontend
+  
   test_backend:
     docker:
       - image: circleci/node:13.8.0
@@ -68,25 +76,6 @@ jobs:
       - run: npm i --prefix backend     
       - run: npm run test --prefix backend
 
-  test_frontend:
-    docker:
-      - image: circleci/node:13.8.0
-    steps:
-      - checkout
-      - attach_workspace:
-          at: ~/
-      - run: npm i --prefix frontend   
-      - run: npm run test --prefix frontend
-
-  analyze_backend:
-    docker:
-      - image: circleci/node:13.8.0
-    steps:
-      - checkout
-      - run: npm audit fix --prefix backend    --force      
-      - run: npm audit --audit-level=critical --prefix backend
-
-
   analyze_frontend:
     docker:
       - image: circleci/node:13.8.0
@@ -94,7 +83,28 @@ jobs:
       - checkout
       - run: npm audit fix --prefix frontend    --force      
       - run: npm audit --audit-level=critical --prefix frontend
-
+  
+  analyze_backend:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - run: npm audit fix --prefix backend    --force      
+      - run: npm audit --audit-level=critical --prefix backend
+  deploy_frontend_infrastructure:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: Deploy the frontend infrastructure using cloudformation
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/cloudformation/frontend_infrastructure.yml \
+              --parameter-overrides ID=prod-${CIRCLE_WORKFLOW_ID:0:7} \
+              --stack-name udapeople-frontend-prod-${CIRCLE_WORKFLOW_ID:0:7}
+      - destroy_environment:
+          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
 
   deploy_backend_infrastructure: 
     docker:
@@ -106,10 +116,10 @@ jobs:
           command: |
             aws cloudformation deploy \
               --template-file .circleci/cloudformation/backend_infrastructure.yml \
-              --stack-name udapeople-backend-prod-${CIRCLE_WORKFLOW_ID:0:7}
-              --parameter-overrides ID="prod-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --parameter-overrides ID="prod-${CIRCLE_WORKFLOW_ID:0:7}"  \
+              --stack-name udapeople-backend-prod-${CIRCLE_WORKFLOW_ID:0:7}               
       - run:
-          name: Save backend URL and IP (for ansible)
+          name: Save backend URL and IP (for ansible) 
           command: |
             BACKEND_AWS_PUBLIC_IP=$(aws ec2 describe-instances \
               --filters "Name=tag:Name,Values=backend-prod-${CIRCLE_WORKFLOW_ID:0:7}" \
@@ -125,21 +135,6 @@ jobs:
           paths:
             - project/.circleci/outputs/backend_url.txt
             - project/.circleci/ansible/inventory.txt
-      - destroy_environment:
-          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
-
-  deploy_frontend_infrastructure:
-    docker:
-      - image: amazon/aws-cli
-    steps:
-      - checkout
-      - run:
-          name: Deploy the frontend infrastructure using cloudformation
-          command: |
-            aws cloudformation deploy \
-              --template-file .circleci/cloudformation/frontend_infrastructure.yml \
-              --parameter-overrides ID="prod-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --stack-name udapeople-frontend-prod-${CIRCLE_WORKFLOW_ID:0:7}
       - destroy_environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
 

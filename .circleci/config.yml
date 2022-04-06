@@ -84,6 +84,9 @@ jobs:
       - run: npm audit fix --prefix frontend    --force      
       - run: npm audit --audit-level=critical --prefix frontend
       - run: npm audit fix --force
+      - run: npm update ansi-regex --depth 5
+      - run: npm update minimist --depth 4
+      - run: npm audit fix
   
   analyze_backend:
     docker:

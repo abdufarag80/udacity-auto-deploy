@@ -93,7 +93,7 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
-      - run: npm audit fix --prefix backend    --force      
+      - run: npm audit fix  --force  --prefix backend        
       - run: npm audit --audit-level=critical --prefix backend
   deploy_frontend_infrastructure:
     docker:

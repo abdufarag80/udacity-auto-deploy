@@ -34,4 +34,4 @@ Resources:
       ImageId: ami-02b05e04df16de7a9 
       Tags:
         - Key: Name
-          Value: !Sub backend-${WorkflowID}
+          Value: !Sub backend-${workflow_id}

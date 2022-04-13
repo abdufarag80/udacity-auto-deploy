@@ -150,7 +150,7 @@ jobs:
       - run:
           name: Run DB migrations
           command: |
-            cd backend
+            cd backend 
             npm install
             npm install mysql --save
             npm run migrations >> migration_output.txt

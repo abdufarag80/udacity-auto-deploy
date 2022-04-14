@@ -14,12 +14,7 @@ commands:
             echo "Destroying environment: <<parameters.workflow_id>> "
             aws cloudformation delete-stack --stack-name udapeople-backend-prod-<<parameters.workflow_id>>
             aws cloudformation delete-stack --stack-name udapeople-frontend-prod-<<parameters.workflow_id>>
-<<<<<<< HEAD
-            # aws s3 rm s3://udapeople-prod-<<parameters.workflow_id>> --recursive 
-=======
-            aws s3 rm s3://udapeople-prod-<<parameters.workflow_id>> --recursive 
->>>>>>> 6f155c258a56fa7a40b30e757eeb0a82401c6411
-           
+            aws s3 rm s3://udapeople-prod-<<parameters.workflow_id>> --recursive            
 
   undo_migrations:
     description: Revert the last migration if successfully run in the current workflow.

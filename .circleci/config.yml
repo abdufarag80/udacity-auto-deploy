@@ -28,7 +28,6 @@ commands:
               npm i
               npm run migration:revert
             fi
-
 jobs:
   build_backend:
     docker:
@@ -41,7 +40,6 @@ jobs:
           root: ~/
           paths:
             - project/backend/node_modules
-
   build_frontend:
     docker:
       - image: circleci/node:13.8.0
@@ -53,7 +51,6 @@ jobs:
           root: ~/
           paths:
             - project/frontend/node_modules
-
   test_backend:
     docker:
       - image: circleci/node:13.8.0

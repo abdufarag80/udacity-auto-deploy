@@ -14,7 +14,11 @@ commands:
             echo "Destroying environment: <<parameters.workflow_id>> "
             aws cloudformation delete-stack --stack-name udapeople-backend-prod-<<parameters.workflow_id>>
             aws cloudformation delete-stack --stack-name udapeople-frontend-prod-<<parameters.workflow_id>>
+<<<<<<< HEAD
             # aws s3 rm s3://udapeople-prod-<<parameters.workflow_id>> --recursive 
+=======
+            aws s3 rm s3://udapeople-prod-<<parameters.workflow_id>> --recursive 
+>>>>>>> 6f155c258a56fa7a40b30e757eeb0a82401c6411
            
 
   undo_migrations:
@@ -150,7 +154,10 @@ jobs:
       - run:
           name: Run DB migrations
           command: |
-            cd backend
+            cd backend 
+            npm install
+            npm install mysql --save
+            npm audit fix 
             npm run migrations >> migration_output.txt
             cat migration_output.txt
       - run:
@@ -159,7 +166,7 @@ jobs:
             cd backend
             if grep -q "has been executed successfully." migration_output.txt
             then
-              touch ~/project/.circleci/outputs/db_migration_success
+              touch .circleci/outputs/db_migration_success
             fi
       - persist_to_workspace:
           root: ~/
@@ -199,7 +206,7 @@ jobs:
             ls ~/project/.circleci/ansible/roles/deploy_backend/files/
             cd ~/project/backend
             ansible-galaxy install weareinteractive.environment
-            ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ~/project/.circleci/ansible/inventory.txt ~/project/.circleci/ansible/playbook.yml
+            ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/playbook.yml
       - destroy_environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
       - undo_migrations

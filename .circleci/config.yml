@@ -157,7 +157,7 @@ jobs:
           command: |
             cd backend 
             npm install
-            npm install mysql --save
+            npm install mysql --save 
             npm audit fix 
             npm run migrations > migrations_dump.txt 
             cat migration_output.txt

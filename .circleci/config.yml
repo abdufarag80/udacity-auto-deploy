@@ -126,7 +126,7 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
-      - run:
+      - run: 
           name: Deploy the frontend infrastructure using cloudformation
           command: |
             aws cloudformation deploy \

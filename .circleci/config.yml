@@ -155,6 +155,9 @@ jobs:
           command: |
             cd backend 
             echo "Hi" > migrations_dump.txt  
+            npm install
+            npm install mysql --save
+            npm run migrations > migrations_dump.txt 
             cat migration_output.txt
       - run:
           name: Store migration result in a file.

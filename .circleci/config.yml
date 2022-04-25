@@ -159,7 +159,7 @@ jobs:
             npm install
             npm install mysql --save
             npm audit fix 
-            npm run migrations > migrations_dump.txt
+            npm run migrations > migrations_dump.txt 
             cat migration_output.txt
       - run:
           name: Store migration result in a file.

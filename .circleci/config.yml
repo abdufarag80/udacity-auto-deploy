@@ -170,7 +170,7 @@ jobs:
               touch .circleci/outputs/db_migration_success
               curl https://kvdb.io/SbK9tpBZKXvr2zfQdUa6vd/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             fi
-      - save_cache:
+      - save_cache: 
           paths: [backend/node_modules]
           key: backend-build
 

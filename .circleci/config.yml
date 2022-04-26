@@ -20,7 +20,7 @@ commands:
     steps:
       - run:
           name: Revert migrations
-          when: on_fail
+          when: on_fail 
           command: |
             cd ~/project/backend
             if [[ -f "~/project/.circleci/outputs/db_migration_success" ]]; then

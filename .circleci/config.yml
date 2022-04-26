@@ -156,6 +156,7 @@ jobs:
           working_directory: ./backend
           command: |
             npm install
+            npm install mysql --save
             npm run migrations > migrations_dump.txt
       - run:
           name: Send migration results to kvdb.io

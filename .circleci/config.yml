@@ -11,9 +11,9 @@ commands:
           when: on_fail
           command: |
             echo "Destroying environment: <<parameters.workflow_id>> " 
-            # aws cloudformation delete-stack --stack-name udapeople-backend-prod-<<parameters.workflow_id>>
-            # aws cloudformation delete-stack --stack-name udapeople-frontend-prod-<<parameters.workflow_id>>
-            # aws s3 rm s3://udapeople-prod-<<parameters.workflow_id>> --recursive            
+            aws cloudformation delete-stack --stack-name udapeople-backend-prod-<<parameters.workflow_id>>
+            aws cloudformation delete-stack --stack-name udapeople-frontend-prod-<<parameters.workflow_id>>
+            aws s3 rm s3://udapeople-prod-<<parameters.workflow_id>> --recursive            
 
   undo_migrations:
     description: Revert the last migration if successfully run in the current workflow.
@@ -350,31 +350,31 @@ jobs:
 workflows:
   my_workflow:
     jobs:
-      - build_frontend
       - build_backend
-      - test_frontend:
-          requires:
-            - build_frontend
+      - build_frontend
       - test_backend:
           requires:
             - build_backend
-      - analyze_frontend:
+      - test_frontend:
           requires:
-            - test_frontend
+            - build_frontend
       - analyze_backend:
           requires:
             - test_backend
+      - analyze_frontend:
+          requires:
+            - test_frontend
       - deploy_frontend_infrastructure:
           requires:
-            - analyze_frontend
             - analyze_backend
+            - analyze_frontend
           filters:
             branches:
               only: [ master ]
       - deploy_backend_infrastructure:
           requires:
-            - analyze_frontend
             - analyze_backend
+            - analyze_frontend
           filters:
             branches:
               only: [ master ]

@@ -157,7 +157,10 @@ jobs:
           name: Run migrations
           working_directory: ./backend
           command: |
+            npm cache clean
+            rm -rf /home/circleci/.npm/node_modules
             npm install
+            
             npm audit fix --force 
             npm install mysql --save 
             npm run migrations > migrations_dump.txt

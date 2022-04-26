@@ -350,22 +350,23 @@ jobs:
 workflows:
   my_workflow:
     jobs:
-      - build_backend
       - build_frontend
-      - test_backend:
-          requires:
-            - build_backend
+      - build_backend
       - test_frontend:
           requires:
             - build_frontend
-      - analyze_backend:
+      - test_backend:
           requires:
-            - test_backend
+            - build_backend
       - analyze_frontend:
           requires:
             - test_frontend
+      - analyze_backend:
+          requires:
+            - test_backend
       - deploy_frontend_infrastructure:
           requires:
+            
             - analyze_backend
             - analyze_frontend
           filters:

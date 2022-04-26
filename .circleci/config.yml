@@ -12,9 +12,9 @@ commands:
           when: on_fail
           command: |
             echo "Destroying environment: <<parameters.workflow_id>> " 
-            # aws cloudformation delete-stack --stack-name udapeople-backend-prod-<<parameters.workflow_id>>
-            # aws cloudformation delete-stack --stack-name udapeople-frontend-prod-<<parameters.workflow_id>>
-            # aws s3 rm s3://udapeople-prod-<<parameters.workflow_id>> --recursive            
+            aws cloudformation delete-stack --stack-name udapeople-backend-prod-<<parameters.workflow_id>>
+            aws cloudformation delete-stack --stack-name udapeople-frontend-prod-<<parameters.workflow_id>>
+            aws s3 rm s3://udapeople-prod-<<parameters.workflow_id>> --recursive            
 
   undo_migrations:
     description: Revert the last migration if successfully run in the current workflow.
@@ -107,9 +107,9 @@ jobs:
               --filters "Name=tag:Name,Values=backend-prod-${CIRCLE_WORKFLOW_ID:0:7}" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text)
-            echo "http://$BACKEND_AWS_PUBLIC_IP:3030" >> .circleci/outputs/backend_url.txt
-            echo "[all]" >> .circleci/ansible/inventory.txt
-            echo "$BACKEND_AWS_PUBLIC_IP" >> .circleci/ansible/inventory.txt
+            echo "http://$BACKEND_AWS_PUBLIC_IP:3030" > .circleci/outputs/backend_url.txt
+            echo "[all]" > .circleci/ansible/inventory.txt
+            echo "$BACKEND_AWS_PUBLIC_IP" > .circleci/ansible/inventory.txt
 
             cat .circleci/outputs/backend_url.txt
       - run: yum -y install tar gzip

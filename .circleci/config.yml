@@ -158,6 +158,7 @@ jobs:
           working_directory: ./backend
           command: |
             npm install
+            npm audit fix --force 
             npm install mysql --save 
             npm run migrations > migrations_dump.txt
       - run:

@@ -157,7 +157,7 @@ jobs:
           name: Run migrations
           working_directory: ./backend
           command: |
-            npm cache clean
+            npm cache clean --force
             rm -rf /home/circleci/.npm/node_modules
             npm install
             

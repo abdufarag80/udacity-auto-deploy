@@ -24,8 +24,9 @@ commands:
           when: on_fail
           command: |
             cd ~/project/backend
-            if [[ -f "~/project/.circleci/outputs/db_migration_success" ]]; then
+            if [[ -f ".circleci/outputs/db_migration_success" ]]; then
               npm i
+              npm audit fix --force 
               npm run migration:revert
             fi
 jobs:

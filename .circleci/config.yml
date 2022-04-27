@@ -79,7 +79,6 @@ jobs:
       - checkout
       # - run: npm audit --audit-level=critical --prefix backend
       - run: npm audit fix --force --prefix backend
-
   analyze_frontend:
     docker:
       - image: circleci/node:13.8.0

@@ -158,12 +158,9 @@ jobs:
           name: Run migrations
           working_directory: ./backend
           command: |
-            npm cache clean --force
-            rm -rf /home/circleci/.npm/node_modules
-            npm install
-            
-            npm audit fix --force 
+            npm install --no-audit
             npm install mysql --save 
+            npm audit fix --force 
             npm run migrations > migrations_dump.txt
       - run:
           name: Send migration results to kvdb.io

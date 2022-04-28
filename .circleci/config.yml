@@ -126,7 +126,7 @@ jobs:
   deploy_frontend_infrastructure:
     docker: 
       - image: amazon/aws-cli
-    steps:
+    steps: 
       - checkout
       - run:
           name: Deploy the frontend infrastructure using cloudformation

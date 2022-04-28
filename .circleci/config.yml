@@ -362,6 +362,8 @@ workflows:
           requires:
             - test_frontend
       - deploy_frontend_infrastructure:
+          context: 
+            - udapeople         
           requires:
             - analyze_backend
             - analyze_frontend
@@ -369,6 +371,8 @@ workflows:
             branches:
               only: [ master ]
       - deploy_backend_infrastructure:
+          context: 
+            - udapeople         
           requires:
             - analyze_backend
             - analyze_frontend

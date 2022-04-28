@@ -1,4 +1,4 @@
-version: 2.1  
+version: 2.1 
 
 commands:
   destroy_environment:
@@ -384,6 +384,8 @@ workflows:
           requires:
             - run_db_migrations_for_backend
       - package_frontend_artifact:
+          context: 
+            - udapeople 
           requires:
             - deploy_frontend_infrastructure
             - run_db_migrations_for_backend

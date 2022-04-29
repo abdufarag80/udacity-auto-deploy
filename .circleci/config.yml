@@ -109,9 +109,8 @@ jobs:
               --output text)
             echo "http://$BACKEND_AWS_PUBLIC_IP:3030" >> ./.circleci/outputs/backend_url.txt
             echo "http://$BACKEND_AWS_PUBLIC_IP:3030" 
-            echo "[all]" > .circleci/ansible/inventory.txt
+            echo "[all]" >> .circleci/ansible/inventory.txt
             echo "$BACKEND_AWS_PUBLIC_IP" >> ./.circleci/ansible/inventory.txt
-            echo "$BACKEND_AWS_PUBLIC_IP"
 
             cat ./.circleci/outputs/backend_url.txt
             cat ./.circleci/ansible/inventory.txt

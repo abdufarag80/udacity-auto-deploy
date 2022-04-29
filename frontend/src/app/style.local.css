@@ -9938,7 +9938,7 @@ button:focus {
 }
 
 .g-sidebar .g-applogo h1.logoimage {
-  background-image: url(../assets/img/logo-glee.png);
+  background-image: url(logo-glee.png);
   background-repeat: no-repeat;
   background-size: cover;
   display: block;

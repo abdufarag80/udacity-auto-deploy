@@ -61,7 +61,6 @@ jobs:
           at: ~/
       - run: npm i --prefix backend
       - run: npm run test --prefix backend
-
   test_frontend:
     docker:
       - image: circleci/node:13.8.0
@@ -71,7 +70,6 @@ jobs:
           at: ~/
       - run: npm i --prefix frontend
       - run: npm run test --prefix frontend
-
   analyze_backend:
     docker:
       - image: circleci/node:13.8.0
@@ -86,7 +84,6 @@ jobs:
       - checkout
       - run: npm audit fix --audit-level=critical --prefix frontend
       - run: npm audit fix --prefix frontend
-
   deploy_backend_infrastructure:
     docker:
       - image: amazon/aws-cli 
@@ -122,7 +119,6 @@ jobs:
             - project/.circleci/ansible/inventory.txt
       - destroy_environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
-
   deploy_frontend_infrastructure:
     docker: 
       - image: amazon/aws-cli
@@ -137,7 +133,6 @@ jobs:
               --stack-name udapeople-frontend-prod-${CIRCLE_WORKFLOW_ID:0:7}
       - destroy_environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
-
   run_db_migrations_for_backend:
     docker:
       - image: circleci/node:13.8.0
@@ -200,8 +195,6 @@ jobs:
             cat deploy_backend.yaml
             ansible-playbook -i inventory.txt deploy_backend.yaml -vv
       # Here's where you will add some code to rollback on failure      
-
-
   smoke_test_frontend:
     docker:
       - image: python:3.7-alpine3.11
@@ -225,8 +218,7 @@ jobs:
       - destroy_environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
       - undo_migrations
-
-  smoke-test:
+  smoke_test_backend:
     docker:
       - image: python:3.7-alpine3.11
     steps:
@@ -246,8 +238,6 @@ jobs:
       - destroy_environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
       - undo_migrations
-
-
   cloudfront-update:
     docker:
       - image: amazon/aws-cli
@@ -343,9 +333,11 @@ workflows:
             - udapeople 
           requires:
             - deploy_backend_infrastructure
-      - smoke-test:
-          requires: [deploy_backend_infrastructure, deploy_frontend_infrastructure]
+      - smoke_test_frontend:
+          requires: [deploy_frontend_infrastructure]
+      - smoke_test_backend:
+          requires: [deploy_backend_infrastructure]
       - cloudfront-update:
-          requires: [smoke-test]
+          requires: [smoke_test_backend , smoke_test_frontend]
       - cleanup:
           requires: [cloudfront-update]

@@ -1,0 +1,38 @@
+---
+- name: "Copying compiled app"
+  copy:
+    src: "~/artifact.tar.gz"
+    dest: "~/artifact.tar.gz"
+
+- name: "Make folder"
+  shell: mkdir ~/backend
+
+- name: "Unzip backend files to correct directory"
+  ansible.builtin.unarchive:
+    src: ~/artifact.tar.gz
+    dest: ~/backend
+    
+- name: "Install dependencies for project"
+  shell: |
+    cd ~/backend
+    npm install
+
+- name: "Copying env vars"
+  copy:
+    src: "~/.env"
+    dest: "~/backend/.env"
+
+- name: "Ensuring env vars is copied"
+  shell: |
+    sleep 15
+
+- name: "Executing node"
+  shell: |
+    cd ~/backend
+    pm2 stop default
+    pm2 start npm -- start
+  register: execute_node
+
+- name: print message
+  debug:
+    msg: "{{ execute_node.stdout_lines }}"

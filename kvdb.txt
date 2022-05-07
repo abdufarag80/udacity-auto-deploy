@@ -1,7 +1,0 @@
-
-kvdb.io
-
-SbK9tpBZKXvr2zfQdUa6vd
-
-
-curl https://kvdb.io/SbK9tpBZKXvr2zfQdUa6vd/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'

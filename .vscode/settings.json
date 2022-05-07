@@ -1,5 +1,0 @@
-{
-    "terminal.integrated.profiles.windows":{"Git Bash":{"path":"H:\\Program Files\\Git\\bin\\bash.exe"},  },
-    "terminal.integrated.defaultProfile.windows": "Git Bash",
-    "terminal.integrated.allowMnemonics": true
-}

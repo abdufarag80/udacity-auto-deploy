@@ -172,11 +172,11 @@ jobs:
 
   configure-infrastructure:
     docker:
-      - image: "python:3.8-slim"
+      - image: "python:3.7-alpine3.11"
     steps:
       - checkout
       - add_ssh_keys:
-          fingerprints: [ "56:d3:ef:f4:3b:f4:56:07:12:7a:07:74:25:58:87:7d" ]
+          fingerprints: ["56:d3:ef:f4:3b:f4:56:07:12:7a:07:74:25:58:87:7d"]
       - run:
           name: Installing dependencies
           command: |

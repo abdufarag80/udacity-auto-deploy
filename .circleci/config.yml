@@ -136,60 +136,100 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Ensure back-end infrastructure exists
+          name: Install dependencies
+          command: yum install -y tar gzip
+      - run:
+          name: Getting the old workflow id
+          command: |
+
+            # Fetch the Old workflow ID
+            export OldWorkflowID=$(aws cloudformation list-exports --query "Exports[?Name==\`WorkflowID\`].Value" --no-paginate --output text)
+            
+            echo "OldWorkflowID: $OldWorkflowID"
+            echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
+
+            # storing old workflow id value in KVDB
+            curl https://kvdb.io/SbK9tpBZKXvr2zfQdUa6vd/OldWorkflowID_${CIRCLE_WORKFLOW_ID:0:7} -d ${OldWorkflowID}
+            echo KVDB Old Workflow is: $(curl --insecure  https://kvdb.io/SbK9tpBZKXvr2zfQdUa6vd/OldWorkflowID_${CIRCLE_WORKFLOW_ID:0:7})
+
+            # Fetch the stack names
+            export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
+                    --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
+            echo stacks: ${STACKS[@]}
+
+            # storing Stacks value in KVDB
+            if [[ "${STACKS}"  != "" ]]
+            then
+              curl https://kvdb.io/SbK9tpBZKXvr2zfQdUa6vd/Stacks_${CIRCLE_WORKFLOW_ID:0:7}  -d '${STACKS}'
+            else
+              curl -k https://kvdb.io/SbK9tpBZKXvr2zfQdUa6vd/Stacks_${CIRCLE_WORKFLOW_ID:0:7}  -d '0'
+            fi
+            echo KVDB Stacks are: $(curl --insecure  https://kvdb.io/SbK9tpBZKXvr2zfQdUa6vd/Stacks_${CIRCLE_WORKFLOW_ID:0:7})
+            
+      - run:
+          name: Deploy backend infrastructure
+          working_directory: ./.circleci/files
           command: |
             aws cloudformation deploy \
-            --template-file .circleci/files/backend.yml \
-            --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-            --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
-            --tags project=udapeople
-      - run: yum -y install tar gzip
+              --template-file backend.yaml \
+              --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
+              --tags project=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
+     
       - run:
-          name: Ensure front-end infrastructure exist
+          name: Deploy frontend infrastructure
+          working_directory: ./.circleci/files
           command: |
             aws cloudformation deploy \
-            --template-file .circleci/files/frontend.yml \
-            --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
-            --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
-            --tags project=udapeople
+              --template-file frontend.yaml \
+              --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
+              --tags project=udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
       - run:
-          name: Add back-end ip to ansible inventory
+          name: Add backend ip to ansible inventory
           command: |
             aws ec2 describe-instances \
-            --query 'Reservations[*].Instances[*].PublicIpAddress' \
-            --output text \
-            --filter Name=tag:Name,Values="backend-${CIRCLE_WORKFLOW_ID:0:7}" >> ~/project/.circleci/ansible/inventory.txt
-      - run:
-          name: ensuring ip is written to anisble's inventory
-          command: |
-            cat ~/project/.circleci/ansible/inventory.txt
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --filters "Name=tag:project,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --output text >> .circleci/ansible/inventory.txt
       - persist_to_workspace:
-          root: ~/project/.circleci/ansible/
+          root: .
           paths:
-            - inventory.txt
+            - .circleci/ansible/inventory.txt
       - destroy-environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
 
   configure-infrastructure:
+    #executor: python
     docker:
-      - image: "python:3.7-alpine3.11"
+      - image: python:3.9.0-alpine
+        environment:
+          NODE_ENV: "local"
+          VERSION: "1"
+          ENVOIRONMENT: "production"
+          TYPEORM_CONNECTION: $TYPEORM_CONNECTION
     steps:
-      - checkout
+      - checkout  
       - add_ssh_keys:
-          fingerprints: ["97:da:a5:df:79:1b:5d:ce:ba:98:e7:4f:96:73:c0:48"]
+          fingerprints: ["97:da:a5:df:79:1b:5d:ce:ba:98:e7:4f:96:73:c0:48"] 
+      - attach_workspace:
+          at: .
       - run:
-          name: Installing dependencies
+          name: Install dependencies
           command: |
             apk add --update ansible
-            export PYTHONUNBUFFERED=1
-            # pip install ansible awscli
-      - attach_workspace:
-          at: ~/workspace/
+            ansible --version
+            cat .circleci/ansible/inventory.txt
+      
+      
+
       - run:
           name: Configure server
+          working_directory: ./.circleci/ansible
           command: |
-            cd .circleci/ansible
-            ansible-playbook -i ~/workspace/inventory.txt configure-server.yml
+            cat inventory.txt
+            ansible-playbook -i inventory.txt configure-server.yaml
+
       - destroy-environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
 
